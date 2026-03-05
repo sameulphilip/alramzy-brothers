@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>الرمزي اخوان - Al Ramzy Brothers | قطع غيار سيارات النقل الثقيل</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="fnc-slider.css">
+    <!-- تحميل صور السلايدر مبكراً لتقليل وقت الظهور -->
+    <link rel="preload" href="hero-slide-1.jpg" as="image">
+    <link rel="preload" href="hero-slide-2.jpg" as="image">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;600;700;900&family=Poppins:wght@300;400;600;700;800&family=Tajawal:wght@300;400;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container">
+            <div class="nav-wrapper">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <img src="logo.png" alt="Al Ramzy Brothers Logo" class="logo-image">
+                    </div>
+                    <div class="logo-text">
+                        <h1>الرمزي اخوان</h1>
+                        <span class="logo-en">Al Ramzy Brothers</span>
+                    </div>
+                </div>
+                <ul class="nav-menu" id="navMenu">
+                    <li><a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a></li>
+                    <li><a href="#about" data-ar="من نحن" data-en="About Us">من نحن</a></li>
+                    <li><a href="#products" data-ar="المنتجات" data-en="Products">المنتجات</a></li>
+                    <li><a href="#contact" data-ar="اتصل بنا" data-en="Contact">اتصل بنا</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <button class="lang-switcher" id="langSwitcher">
+                        <span class="lang-text" data-ar="English" data-en="العربية">English</span>
+                    </button>
+                    <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section - FNC Slider (صور السلايدر: hero-slide-1.png, hero-slide-2.png) -->
+    <section id="home" class="hero hero-fnc-wrap">
+        <div class="fnc-slider fnc-slider--ramzy">
+            <div class="fnc-slider__slides">
+                <div class="fnc-slide m--blend-green m--active-slide">
+                    <div class="fnc-slide__inner">
+                        <div class="fnc-slide__mask">
+                            <div class="fnc-slide__mask-inner"></div>
+                        </div>
+                        <div class="fnc-slide__content">
+                            <h2 class="fnc-slide__heading">
+                                <div class="fnc-slide__heading-line"><span>الرمزي</span></div>
+                                <div class="fnc-slide__heading-line"><span>اخوان</span></div>
+                            </h2>
+                            <a href="#products" class="fnc-slide__action-btn" data-ar="تصفح المنتجات" data-en="Browse Products">تصفح المنتجات</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="fnc-slide m--blend-dark">
+                    <div class="fnc-slide__inner">
+                        <div class="fnc-slide__mask">
+                            <div class="fnc-slide__mask-inner"></div>
+                        </div>
+                        <div class="fnc-slide__content">
+                            <h2 class="fnc-slide__heading">
+                                <div class="fnc-slide__heading-line"><span>قطع غيار</span></div>
+                                <div class="fnc-slide__heading-line"><span>النقل الثقيل</span></div>
+                            </h2>
+                            <a href="#products" class="fnc-slide__action-btn" data-ar="تصفح المنتجات" data-en="Browse Products">تصفح المنتجات</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <nav class="fnc-nav">
+                <div class="fnc-nav__bgs">
+                    <div class="fnc-nav__bg m--navbg-green m--active-nav-bg"></div>
+                    <div class="fnc-nav__bg m--navbg-dark"></div>
+                </div>
+                <div class="fnc-nav__controls">
+                    <button type="button" class="fnc-nav__control">
+                        waspo
+                        <span class="fnc-nav__control-progress"></span>
+                    </button>
+                    <button type="button" class="fnc-nav__control">
+                        Arskar
+                        <span class="fnc-nav__control-progress"></span>
+                    </button>
+                </div>
+            </nav>
+        </div>
+    </section>
+
+    <!-- Stats Bar (inspired by Sampa) -->
+    <section class="stats-bar">
+        <div class="container">
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span class="stat-number" id="statProducts">20+</span>
+                    <span class="stat-label" data-ar="منتج" data-en="Products">منتج</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-number">5</span>
+                    <span class="stat-label" data-ar="فئة" data-en="Categories">فئة</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label stat-tagline" data-ar="متخصصون في قطع غيار النقل الثقيل" data-en="Heavy Duty Truck Parts Specialists">متخصصون في قطع غيار النقل الثقيل</span>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- New Products Section -->
+    <section id="new-products" class="new-products">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-ar="المنتجات الجديدة" data-en="New Products">المنتجات الجديدة</h2>
+                <p class="section-subtitle" data-ar="أحدث الإضافات إلى مجموعتنا" data-en="Latest additions to our collection">أحدث الإضافات إلى مجموعتنا</p>
+            </div>
+            <div class="new-products-grid" id="newProductsGrid"></div>
+            <div class="new-products-cta">
+                <a href="#products" class="btn btn-primary" data-ar="عرض كل المنتجات" data-en="View All Products">عرض كل المنتجات</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-ar="من نحن" data-en="About Us">من نحن</h2>
+            </div>
+            <div class="about-content">
+                <div class="about-logo-wrap">
+                    <div class="about-logo-box">
+                        <img src="logo.png" alt="Al Ramzy Brothers" class="about-logo-img">
+                    </div>
+                </div>
+                <div class="about-text">
+                    <p class="about-intro" data-ar="الرمزي اخوان هي شركة رائدة في مجال قطع غيار سيارات النقل الثقيل والشاحنات، نقدم مجموعة واسعة من القطع الأصلية والبديلة لجميع أنواع الشاحنات والباصات والمركبات التجارية. نحن ملتزمون بتقديم منتجات عالية الجودة وخدمة عملاء متميزة لعملائنا في قطاع النقل الثقيل." data-en="Al Ramzy Brothers is a leading company in heavy duty trucks and commercial vehicles parts industry, offering a wide range of original and alternative parts for all types of trucks, buses, and commercial vehicles. We are committed to providing high-quality products and excellent customer service for our clients in the heavy transport sector.">
+                        الرمزي اخوان هي شركة رائدة في مجال قطع غيار سيارات النقل الثقيل والشاحنات، نقدم مجموعة واسعة من القطع الأصلية والبديلة لجميع أنواع الشاحنات والباصات والمركبات التجارية. نحن ملتزمون بتقديم منتجات عالية الجودة وخدمة عملاء متميزة لعملائنا في قطاع النقل الثقيل.
+                    </p>
+                    <div class="features">
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">
+                                <h3 data-ar="جودة عالية" data-en="High Quality">جودة عالية</h3>
+                                <p data-ar="نضمن جودة جميع منتجاتنا" data-en="We guarantee the quality of all our products">نضمن جودة جميع منتجاتنا</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">
+                                <h3 data-ar="أسعار تنافسية" data-en="Competitive Prices">أسعار تنافسية</h3>
+                                <p data-ar="أفضل الأسعار في السوق" data-en="Best prices in the market">أفضل الأسعار في السوق</p>
+                            </div>
+                        </div>
+                        <div class="feature-item">
+                            <div class="feature-icon">✓</div>
+                            <div class="feature-text">
+                                <h3 data-ar="خدمة عملاء متميزة" data-en="Excellent Service">خدمة عملاء متميزة</h3>
+                                <p data-ar="فريق محترف لخدمتكم" data-en="Professional team at your service">فريق محترف لخدمتكم</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section id="products" class="products">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-ar="المنتجات" data-en="Products">المنتجات</h2>
+                <p class="section-subtitle" data-ar="تصفح مجموعتنا الواسعة من قطع غيار النقل الثقيل" data-en="Browse our wide range of heavy duty truck parts">تصفح مجموعتنا الواسعة من قطع غيار النقل الثقيل</p>
+            </div>
+            <!-- Search by Brands -->
+            <div class="brands-section">
+                <h3 class="brands-section__title" data-ar="اختر حسب الماركة" data-en="Search by Brands">اختر حسب الماركة</h3>
+                <div class="brands-cards" id="brandCards"></div>
+            </div>
+            <div class="products-filter" id="productsFilter"></div>
+            <div class="products-grid" id="productsGrid">
+                <!-- Products will be dynamically loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact" class="contact">
+        <div class="container">
+            <div class="section-header">
+                <h2 class="section-title" data-ar="اتصل بنا" data-en="Contact Us">اتصل بنا</h2>
+                <p class="section-subtitle" data-ar="نحن هنا لمساعدتك" data-en="We're here to help">نحن هنا لمساعدتك</p>
+            </div>
+            <div class="contact-content">
+                <div class="contact-info" id="contactInfo"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3 data-ar="الرمزي اخوان" data-en="Al Ramzy Brothers">الرمزي اخوان</h3>
+                    <p data-ar="متخصصون في قطع غيار النقل الثقيل" data-en="Heavy Duty Truck Parts Specialists">متخصصون في قطع غيار النقل الثقيل</p>
+                </div>
+                <div class="footer-section">
+                    <h3 data-ar="روابط سريعة" data-en="Quick Links">روابط سريعة</h3>
+                    <ul>
+                        <li><a href="#home" data-ar="الرئيسية" data-en="Home">الرئيسية</a></li>
+                        <li><a href="#about" data-ar="من نحن" data-en="About Us">من نحن</a></li>
+                        <li><a href="#products" data-ar="المنتجات" data-en="Products">المنتجات</a></li>
+                        <li><a href="#contact" data-ar="اتصل بنا" data-en="Contact">اتصل بنا</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3 data-ar="اتصل بنا" data-en="Contact Us">اتصل بنا</h3>
+                    <p>info@alramzybrothers.com</p>
+                    <p data-ar="القاهرة، مصر" data-en="Cairo, Egypt">القاهرة، مصر</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p data-ar="© 2024 الرمزي اخوان. جميع الحقوق محفوظة." data-en="© 2024 Al Ramzy Brothers. All rights reserved.">© 2024 الرمزي اخوان. جميع الحقوق محفوظة.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="admin-data.js"></script>
+    <script src="fnc-slider.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>

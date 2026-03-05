@@ -1,0 +1,520 @@
+/* FNC Slider - converted from SCSS, scoped for Al Ramzy hero */
+/* غيّر ارتفاع السلايدر هنا، مثلاً: 85vh أو 70vh أو 600px */
+.hero.hero-fnc-wrap {
+  --fnc-slider-height: 60vh;
+  overflow: hidden;
+  position: relative;
+  min-height: var(--fnc-slider-height);
+  padding: 0;
+  display: block;
+  background: #000;
+  align-items: stretch;
+}
+
+.hero.hero-fnc-wrap::after {
+  display: none;
+}
+
+.fnc-slider {
+  overflow: hidden;
+  box-sizing: border-box;
+  position: relative;
+  height: 100%;
+  min-height: var(--fnc-slider-height);
+}
+
+.fnc-slider *,
+.fnc-slider *::before,
+.fnc-slider *::after {
+  box-sizing: border-box;
+}
+
+.fnc-slider__slides {
+  position: relative;
+  height: 100%;
+  min-height: var(--fnc-slider-height);
+  transition: transform 1s 0.666s ease-in-out;
+}
+
+/* Blend colors: dark, green, blue (3 slides) */
+.fnc-slider .m--blend-dark .fnc-slide__inner {
+  background-color: #5a5a5a;
+}
+.fnc-slider .m--blend-dark .fnc-slide__mask-inner {
+  background-color: #3d3d3d;
+}
+.fnc-slider .m--blend-green .fnc-slide__inner {
+  background-color: #5a7a78;
+}
+.fnc-slider .m--blend-green .fnc-slide__mask-inner {
+  background-color: #42605E;
+}
+.fnc-slider .m--blend-blue .fnc-slide__inner {
+  background-color: #4a9ab5;
+}
+.fnc-slider .m--blend-blue .fnc-slide__mask-inner {
+  background-color: #2D7791;
+}
+
+.fnc-slider .m--navbg-dark {
+  background-color: #3d3d3d;
+}
+.fnc-slider .m--navbg-green {
+  background-color: #42605E;
+}
+.fnc-slider .m--navbg-blue {
+  background-color: #2D7791;
+}
+
+/* Slide */
+.fnc-slide {
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  min-height: var(--fnc-slider-height);
+  transform: translate3d(0, 0, 0);
+}
+
+.fnc-slide.m--before-sliding {
+  z-index: 2 !important;
+  transform: translate3d(100%, 0, 0);
+}
+
+.fnc-slide.m--active-slide {
+  z-index: 1;
+  transition: transform 1s 0.666s ease-in-out;
+  transform: translate3d(0, 0, 0);
+}
+
+.fnc-slide__inner {
+  position: relative;
+  height: 100%;
+  background-size: cover;
+  background-position: center top;
+  transform: translate3d(0, 0, 0);
+}
+
+.fnc-slide.m--before-sliding .fnc-slide__inner {
+  transform: translate3d(-100%, 0, 0);
+}
+
+.fnc-slide.m--active-slide .fnc-slide__inner {
+  transition: transform 1s 0.666s ease-in-out;
+  transform: translate3d(0, 0, 0);
+}
+
+/* Mask */
+.fnc-slide__mask {
+  overflow: hidden;
+  z-index: 1;
+  position: absolute;
+  right: 60%;
+  top: 15%;
+  width: 50.25vh;
+  height: 67vh;
+  margin-right: -90px;
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 0 100%, 0 0, 6vh 0, 6vh 61vh, 44vh 61vh, 44vh 6vh, 6vh 6vh);
+  transform-origin: 50% 0;
+  transition-timing-function: ease-in-out;
+}
+
+.fnc-slide.m--before-sliding .fnc-slide__mask {
+  transform: rotate(-10deg) translate3d(200px, 0, 0);
+  opacity: 0;
+}
+
+.fnc-slide.m--active-slide .fnc-slide__mask {
+  transition: transform 0.7s 1.222s ease-in-out, opacity 0.35s 1.222s ease-in-out;
+  transform: translate3d(0, 0, 0);
+  opacity: 1;
+}
+
+.fnc-slide.m--previous-slide .fnc-slide__mask {
+  transition: transform 0.7s 0.333s ease-in-out, opacity 0.35s 0.508s ease-in-out;
+  transform: rotate(10deg) translate3d(-200px, 0, 0);
+  opacity: 0;
+}
+
+.fnc-slide__mask-inner {
+  z-index: -1;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 100vw;
+  height: 100vh;
+  margin-left: -50vw;
+  margin-top: -50vh;
+  background-size: cover;
+  background-position: center center;
+  background-blend-mode: luminosity;
+  transform-origin: 50% calc((100vh - 67vh) / 2);
+  transition-timing-function: ease-in-out;
+}
+
+.fnc-slide.m--before-sliding .fnc-slide__mask-inner {
+  transform: translateY(0) rotate(10deg) translateX(200px) translateZ(0);
+}
+
+.fnc-slide.m--active-slide .fnc-slide__mask-inner {
+  transition: transform 0.7s 1.222s ease-in-out;
+  transform: translateX(0);
+}
+
+.fnc-slide.m--previous-slide .fnc-slide__mask-inner {
+  transition: transform 0.7s 0.333s ease-in-out;
+  transform: translateY(0) rotate(-10deg) translateX(-200px) translateZ(0);
+}
+
+/* Content */
+.fnc-slide__content {
+  z-index: 2;
+  position: absolute;
+  left: 40%;
+  top: 28%;
+}
+
+.fnc-slide__heading {
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.fnc-slide__heading-line {
+  overflow: hidden;
+  position: relative;
+  padding-right: 20px;
+  font-size: 100px;
+  color: #fff;
+  word-spacing: 10px;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+.fnc-slide__heading-line:nth-child(2) {
+  padding-left: 30px;
+}
+
+.fnc-slide.m--before-sliding .fnc-slide__heading-line {
+  transform: translateY(100%);
+}
+
+.fnc-slide.m--active-slide .fnc-slide__heading-line {
+  transition: transform 1.5s 1s ease-in-out;
+  transform: translateY(0);
+}
+
+.fnc-slide.m--previous-slide .fnc-slide__heading-line {
+  transition: transform 1.5s ease-in-out;
+  transform: translateY(-100%);
+}
+
+.fnc-slide__heading-line span {
+  display: block;
+}
+
+.fnc-slide.m--before-sliding .fnc-slide__heading-line span {
+  transform: translateY(-100%);
+}
+
+.fnc-slide.m--active-slide .fnc-slide__heading-line span {
+  transition: transform 1.5s 1s ease-in-out;
+  transform: translateY(0);
+}
+
+.fnc-slide.m--previous-slide .fnc-slide__heading-line span {
+  transition: transform 1.5s ease-in-out;
+  transform: translateY(100%);
+}
+
+/* Action button (link) */
+.fnc-slide__action-btn {
+  position: relative;
+  margin-left: 200px;
+  padding: 12px 24px;
+  font-size: 20px;
+  line-height: 1;
+  color: transparent;
+  border: none;
+  text-transform: uppercase;
+  background: transparent;
+  cursor: pointer;
+  text-align: center;
+  outline: none;
+  text-decoration: none;
+  display: inline-block;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+.fnc-slide__action-btn span {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  perspective: 1000px;
+  transform-style: preserve-3d;
+  transition: transform 0.3s;
+  transform-origin: 50% 0;
+  line-height: 38px;
+  padding: 0 24px;
+  box-sizing: border-box;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.65);
+  border: 2px solid rgba(255, 255, 255, 0.95);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.9);
+}
+
+.fnc-slide__action-btn span::before {
+  display: none;
+}
+
+.fnc-slide__action-btn span::after {
+  content: attr(data-text);
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  line-height: 38px;
+  background: #1F2833;
+  opacity: 0;
+  transform-origin: 50% 0;
+  transform: translateY(100%) rotateX(-90deg);
+  transition: opacity 0.15s 0.15s;
+}
+
+.fnc-slide__action-btn:hover span {
+  transform: rotateX(90deg);
+}
+
+.fnc-slide__action-btn:hover span::after {
+  opacity: 1;
+  transition: opacity 0.15s;
+}
+
+/* Nav */
+.fnc-nav {
+  z-index: 5;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+.fnc-nav__bgs {
+  z-index: -1;
+  overflow: hidden;
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fnc-nav__bg {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.fnc-nav__bg.m--nav-bg-before {
+  z-index: 2 !important;
+  transform: translateX(100%);
+}
+
+.fnc-nav__bg.m--active-nav-bg {
+  z-index: 1;
+  transition: transform 1s 0.666s ease-in-out;
+  transform: translateX(0);
+}
+
+.fnc-nav__controls {
+  font-size: 0;
+}
+
+.fnc-nav__control {
+  overflow: hidden;
+  position: relative;
+  display: inline-block;
+  vertical-align: top;
+  width: 100px;
+  height: 50px;
+  font-size: 14px;
+  color: #fff;
+  text-transform: uppercase;
+  background: transparent;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  transition: background-color 0.5s ease-in-out;
+  font-family: 'Cairo', 'Tajawal', sans-serif;
+}
+
+.fnc-nav__control.m--active-control {
+  background: #1F2833;
+}
+
+.fnc-nav__control-progress {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background: #fff;
+  transform-origin: 0 50%;
+  transform: scaleX(0);
+  transition-timing-function: linear !important;
+}
+
+.fnc-slider.m--with-autosliding .fnc-nav__control.m--active-control .fnc-nav__control-progress {
+  transform: scaleX(1);
+}
+
+.fnc-nav__control.m--prev-control .fnc-nav__control-progress {
+  transform: translateX(100%);
+  transition: transform 0.5s !important;
+}
+
+.fnc-nav__control.m--reset-progress .fnc-nav__control-progress {
+  transform: scaleX(0);
+  transition: transform 0s 0s !important;
+}
+
+.fnc-slider.m--autosliding-blocked .fnc-nav__control .fnc-nav__control-progress {
+  transition: all 0s 0s !important;
+  transform: scaleX(0) !important;
+}
+
+/* إخفاء المربع/القناع أثناء التقليب */
+.fnc-slider--ramzy .fnc-slide__mask {
+  display: none !important;
+}
+
+/* إخفاء العناوين فقط وإظهار زر تصفح المنتجات */
+.fnc-slider--ramzy .fnc-slide__heading {
+  display: none !important;
+}
+
+/* تنسيق منطقة الزر: في المنتصف أسفل السلايدر */
+.fnc-slider--ramzy .fnc-slide__content {
+  left: 50%;
+  right: auto;
+  top: auto;
+  bottom: 24px;
+  transform: translateX(-50%);
+  margin: 0;
+  text-align: center;
+}
+
+[dir="rtl"] .fnc-slider--ramzy .fnc-slide__content {
+  left: 50%;
+  right: auto;
+  transform: translateX(-50%);
+}
+
+/* زر تصفح المنتجات — أوضح ومتناسق */
+.fnc-slider--ramzy .fnc-slide__action-btn {
+  margin: 0;
+  padding: 14px 32px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  background: #c41e3a;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
+  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
+  text-decoration: none;
+  line-height: 1.4;
+}
+
+.fnc-slider--ramzy .fnc-slide__action-btn:hover {
+  background: #a01830;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+}
+
+/* Al Ramzy: slide background images (JS adds .fnc-slide-1, .fnc-slide-2) */
+.fnc-slider--ramzy .fnc-slide-1 .fnc-slide__inner,
+.fnc-slider--ramzy .fnc-slide-1 .fnc-slide__mask-inner {
+  background-image: url('hero-slide-1.jpg');
+}
+
+.fnc-slider--ramzy .fnc-slide-2 .fnc-slide__inner,
+.fnc-slider--ramzy .fnc-slide-2 .fnc-slide__mask-inner {
+  background-image: url('hero-slide-2.jpg');
+}
+
+/* RTL: mirror content position and nav */
+[dir="rtl"] .fnc-slide__content {
+  left: auto;
+  right: 40%;
+}
+
+[dir="rtl"] .fnc-slide__mask {
+  right: auto;
+  left: 60%;
+  margin-right: 0;
+  margin-left: -90px;
+}
+
+[dir="rtl"] .fnc-nav {
+  right: auto;
+  left: 0;
+}
+
+/* Responsive: smaller headings and mask */
+@media (max-width: 1024px) {
+  .fnc-slide__heading-line {
+    font-size: 72px;
+  }
+  .fnc-slide__mask {
+    width: 40vh;
+    height: 53vh;
+    margin-right: -60px;
+  }
+  [dir="rtl"] .fnc-slide__mask {
+    margin-left: -60px;
+  }
+  .fnc-slide__mask-inner {
+    transform-origin: 50% calc((100vh - 53vh) / 2);
+  }
+}
+
+@media (max-width: 768px) {
+  .fnc-slide__heading-line {
+    font-size: 48px;
+    padding-right: 10px;
+  }
+  .fnc-slide__heading-line:nth-child(2) {
+    padding-left: 15px;
+  }
+  .fnc-slide__content {
+    left: 30%;
+    top: 25%;
+  }
+  [dir="rtl"] .fnc-slide__content {
+    right: 30%;
+  }
+  .fnc-slide__action-btn {
+    margin-left: 0;
+    font-size: 16px;
+  }
+  .fnc-slide__mask {
+    right: 70%;
+    width: 35vh;
+    height: 47vh;
+    margin-right: -40px;
+  }
+  [dir="rtl"] .fnc-slide__mask {
+    left: 70%;
+    margin-left: -40px;
+  }
+  .fnc-nav__control {
+    width: 80px;
+    height: 44px;
+    font-size: 12px;
+  }
+}

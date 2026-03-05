@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>تسجيل الدخول — لوحة التحكم | Al Ramzy Brothers</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        .login-wrap { max-width: 400px; margin: 4rem auto; padding: 2rem; background: #fff; border-radius: 14px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; }
+        .login-wrap h1 { margin: 0 0 1.5rem; font-size: 1.5rem; text-align: center; }
+        .login-wrap .form-row { margin-bottom: 1rem; }
+        .login-wrap .form-actions { margin-top: 1.5rem; }
+        .login-wrap .btn { width: 100%; padding: 0.75rem; }
+        .login-back { display: block; text-align: center; margin-top: 1rem; color: #2563eb; }
+        .login-msg { text-align: center; color: #dc2626; font-size: 0.9rem; margin-top: 0.5rem; min-height: 1.2em; }
+    </style>
+</head>
+<body>
+    <div class="login-wrap">
+        <h1 id="loginTitle">تسجيل الدخول</h1>
+        <form id="formLogin" class="admin-form">
+            <div class="form-row" id="rowDisplayName" style="display: none;">
+                <label>الاسم (للظهور في السجل)</label>
+                <input type="text" id="displayName" name="displayName" placeholder="مثال: أحمد محمد">
+            </div>
+            <div class="form-row">
+                <label>اسم المستخدم</label>
+                <input type="text" id="username" name="username" required autocomplete="username" placeholder="admin">
+            </div>
+            <div class="form-row">
+                <label>كلمة المرور</label>
+                <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="••••••••">
+            </div>
+            <div class="form-row" id="rowPassword2" style="display: none;">
+                <label>تأكيد كلمة المرور</label>
+                <input type="password" id="password2" name="password2" placeholder="••••••••">
+            </div>
+            <p class="login-msg" id="loginMsg"></p>
+            <div class="form-actions">
+                <button type="submit" class="btn btn-primary" id="btnSubmit">دخول</button>
+            </div>
+        </form>
+        <a href="index.html" class="login-back">← العودة للموقع</a>
+    </div>
+    <script src="admin-data.js"></script>
+    <script src="login.js"></script>
+</body>
+</html>

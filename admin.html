@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم — المنتجات والفئات | Al Ramzy Brothers</title>
+    <link rel="stylesheet" href="admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <script src="admin-data.js"></script>
+    <script>
+        if (!getCurrentUser()) { window.location.replace('login.html'); }
+    </script>
+    <div class="admin-wrap">
+        <header class="admin-header">
+            <div>
+                <h1>لوحة التحكم</h1>
+                <p class="admin-user-info"><span id="adminUserName"></span> <a href="#" id="adminLogout" class="admin-logout">(تسجيل الخروج)</a></p>
+            </div>
+            <a href="index.html" class="admin-back">← العودة للموقع</a>
+        </header>
+
+        <nav class="admin-tabs">
+            <button type="button" class="admin-tab active" data-tab="products">المنتجات</button>
+            <button type="button" class="admin-tab" data-tab="categories">الفئات</button>
+            <button type="button" class="admin-tab" data-tab="brands">الماركات</button>
+            <button type="button" class="admin-tab" data-tab="contact">اتصل بنا</button>
+            <button type="button" class="admin-tab" data-tab="audit">سجل التغييرات</button>
+        </nav>
+
+        <!-- Products Tab -->
+        <section id="tab-products" class="admin-tab-panel active">
+            <div class="admin-toolbar">
+                <h2>إدارة المنتجات</h2>
+                <div class="admin-toolbar-actions">
+                    <button type="button" class="btn btn-primary" id="btnAddProduct">+ إضافة منتج</button>
+                    <label class="btn btn-secondary btn-import-csv">
+                        استيراد CSV
+                        <input type="file" id="importCsvInput" accept=".csv" style="display:none">
+                    </label>
+                    <a href="#" id="downloadCsvTemplate" class="btn btn-outline" download="products-template.csv">تحميل نموذج CSV</a>
+                </div>
+            </div>
+            <p class="import-hint" id="importCsvHint">الأعمدة المطلوبة: name_ar, name_en, desc_ar, desc_en, category, brand, price_ar, price_en, icon (اختياري). في icon يمكن وضع إيموجي (مثل 🚛) أو <strong>رابط صورة</strong> (http أو https). الفئة والماركة: نفس المعرفات (مثل engine, mercedes).</p>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>الأيقونة</th>
+                            <th>الاسم (عربي)</th>
+                            <th>الاسم (إنجليزي)</th>
+                            <th>الفئة</th>
+                            <th>السعر</th>
+                            <th title="عرض في المنتجات الجديدة">جديد</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="productsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Categories Tab -->
+        <section id="tab-categories" class="admin-tab-panel">
+            <div class="admin-toolbar">
+                <h2>إدارة الفئات</h2>
+                <button type="button" class="btn btn-primary" id="btnAddCategory">+ إضافة فئة</button>
+            </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>المعرف</th>
+                            <th>الأيقونة</th>
+                            <th>الاسم (عربي)</th>
+                            <th>الاسم (إنجليزي)</th>
+                            <th>ترتيب</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="categoriesTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Brands Tab -->
+        <section id="tab-brands" class="admin-tab-panel">
+            <div class="admin-toolbar">
+                <h2>إدارة الماركات</h2>
+                <button type="button" class="btn btn-primary" id="btnAddBrand">+ إضافة ماركة</button>
+            </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>المعرف</th>
+                            <th>الشعار</th>
+                            <th>الاسم (عربي)</th>
+                            <th>الاسم (إنجليزي)</th>
+                            <th>عدد المنتجات</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="brandsTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Contact Tab -->
+        <section id="tab-contact" class="admin-tab-panel">
+            <div class="admin-toolbar">
+                <h2>إدارة اتصل بنا</h2>
+                <button type="button" class="btn btn-primary" id="btnAddContact">+ إضافة عنصر</button>
+            </div>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>النوع</th>
+                            <th>العنوان (عربي)</th>
+                            <th>العنوان (إنجليزي)</th>
+                            <th>المحتوى / الرابط</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody id="contactTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Audit Tab -->
+        <section id="tab-audit" class="admin-tab-panel">
+            <div class="admin-toolbar">
+                <h2>سجل التغييرات</h2>
+            </div>
+            <p class="audit-desc">آخر إضافات وتعديلات وحذوفات على المنتجات والفئات مع اسم المستخدم والوقت.</p>
+            <div class="admin-table-wrap">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>الوقت</th>
+                            <th>الإجراء</th>
+                            <th>النوع</th>
+                            <th>المعرف / الاسم</th>
+                            <th>المستخدم</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditTableBody"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <!-- Modal: Product Form -->
+    <div id="modalProduct" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalProductTitle">إضافة منتج</h3>
+                <button type="button" class="modal-close" data-close="modalProduct">&times;</button>
+            </div>
+            <form id="formProduct" class="admin-form">
+                <input type="hidden" id="productId" name="id">
+                <div class="form-row">
+                    <label>الاسم (عربي)</label>
+                    <input type="text" id="productNameAr" name="nameAr" required>
+                </div>
+                <div class="form-row">
+                    <label>الاسم (إنجليزي)</label>
+                    <input type="text" id="productNameEn" name="nameEn" required>
+                </div>
+                <div class="form-row">
+                    <label>الوصف (عربي)</label>
+                    <textarea id="productDescAr" name="descAr" rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <label>الوصف (إنجليزي)</label>
+                    <textarea id="productDescEn" name="descEn" rows="2"></textarea>
+                </div>
+                <div class="form-row">
+                    <label>الفئة</label>
+                    <select id="productCategory" name="category" required></select>
+                </div>
+                <div class="form-row">
+                    <label>الماركة</label>
+                    <select id="productBrand" name="brand"></select>
+                </div>
+                <div class="form-row">
+                    <label>السعر (عربي)</label>
+                    <input type="text" id="productPriceAr" name="priceAr" placeholder="مثال: 450 ج.م">
+                </div>
+                <div class="form-row">
+                    <label>السعر (إنجليزي)</label>
+                    <input type="text" id="productPriceEn" name="priceEn" placeholder="مثال: 450 EGP">
+                </div>
+                <div class="form-row">
+                    <label>أيقونة المنتج</label>
+                    <input type="hidden" id="productIconValue" name="iconValue">
+                    <div class="icon-preview" id="productIconPreview"></div>
+                    <input type="text" id="productIconEmoji" placeholder="إيموجي (اختياري) مثل 🚛" maxlength="4" class="input-emoji">
+                    <span class="input-or">أو</span>
+                    <input type="file" id="productIconFile" accept="image/*" class="input-file">
+                </div>
+                <div class="form-row form-row--checkbox">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="productFeatured" name="featured" value="1">
+                        <span data-ar="عرض في المنتجات الجديدة (الصفحة الرئيسية)" data-en="Show in New Products (home page)">عرض في المنتجات الجديدة (الصفحة الرئيسية)</span>
+                    </label>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modalProduct">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Category Form -->
+    <div id="modalCategory" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalCategoryTitle">إضافة فئة</h3>
+                <button type="button" class="modal-close" data-close="modalCategory">&times;</button>
+            </div>
+            <form id="formCategory" class="admin-form">
+                <input type="hidden" id="categoryId" name="id">
+                <div class="form-row">
+                    <label>المعرف (بالإنجليزية، بدون مسافات)</label>
+                    <input type="text" id="categoryKey" name="key" placeholder="مثال: engine" required pattern="[a-z0-9_]+">
+                </div>
+                <div class="form-row">
+                    <label>الاسم (عربي)</label>
+                    <input type="text" id="categoryNameAr" name="nameAr" required>
+                </div>
+                <div class="form-row">
+                    <label>الاسم (إنجليزي)</label>
+                    <input type="text" id="categoryNameEn" name="nameEn" required>
+                </div>
+                <div class="form-row">
+                    <label>أيقونة الفئة</label>
+                    <input type="hidden" id="categoryIconValue" name="iconValue">
+                    <div class="icon-preview" id="categoryIconPreview"></div>
+                    <input type="text" id="categoryIconEmoji" placeholder="إيموجي (اختياري) مثل 🚛" maxlength="4" class="input-emoji">
+                    <span class="input-or">أو</span>
+                    <input type="file" id="categoryIconFile" accept="image/*" class="input-file">
+                </div>
+                <div class="form-row">
+                    <label>ترتيب العرض</label>
+                    <input type="number" id="categoryOrder" name="order" value="0" min="0">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modalCategory">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Brand Form -->
+    <div id="modalBrand" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalBrandTitle">إضافة ماركة</h3>
+                <button type="button" class="modal-close" data-close="modalBrand">&times;</button>
+            </div>
+            <form id="formBrand" class="admin-form">
+                <input type="hidden" id="brandIdOriginal" name="idOriginal">
+                <div class="form-row">
+                    <label>المعرف (بالإنجليزية، بدون مسافات)</label>
+                    <input type="text" id="brandKey" name="key" placeholder="مثال: mercedes" required pattern="[a-z0-9_]+">
+                </div>
+                <div class="form-row">
+                    <label>الاسم (عربي)</label>
+                    <input type="text" id="brandNameAr" name="nameAr" required>
+                </div>
+                <div class="form-row">
+                    <label>الاسم (إنجليزي)</label>
+                    <input type="text" id="brandNameEn" name="nameEn" required>
+                </div>
+                <div class="form-row">
+                    <label>رابط صورة الشعار (اختياري)</label>
+                    <input type="text" id="brandImage" name="image" placeholder="مثال: brands/mercedes.png أو https://...">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modalBrand">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Contact Item Form -->
+    <div id="modalContact" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalContactTitle">إضافة عنصر اتصل بنا</h3>
+                <button type="button" class="modal-close" data-close="modalContact">&times;</button>
+            </div>
+            <form id="formContact" class="admin-form">
+                <input type="hidden" id="contactItemId" name="id">
+                <div class="form-row">
+                    <label>نوع العنصر</label>
+                    <select id="contactType" name="type" required>
+                        <option value="phone">هاتف</option>
+                        <option value="email">بريد إلكتروني</option>
+                        <option value="address">عنوان</option>
+                        <option value="link">رابط (خريطة / موقع)</option>
+                    </select>
+                </div>
+                <div class="form-row">
+                    <label>العنوان (عربي)</label>
+                    <input type="text" id="contactTitleAr" name="titleAr" required placeholder="مثال: الهاتف">
+                </div>
+                <div class="form-row">
+                    <label>العنوان (إنجليزي)</label>
+                    <input type="text" id="contactTitleEn" name="titleEn" required placeholder="مثال: Phone">
+                </div>
+                <div class="form-row">
+                    <label>المحتوى (عربي)</label>
+                    <input type="text" id="contactValueAr" name="valueAr" placeholder="رقم الهاتف أو النص أو وصف الرابط">
+                </div>
+                <div class="form-row">
+                    <label>المحتوى (إنجليزي)</label>
+                    <input type="text" id="contactValueEn" name="valueEn" placeholder="مثال: +201221512200">
+                </div>
+                <div class="form-row" id="contactLinkRow">
+                    <label>رابط (للنوع «رابط»)</label>
+                    <input type="url" id="contactLink" name="link" placeholder="https://...">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-secondary" data-close="modalContact">إلغاء</button>
+                    <button type="submit" class="btn btn-primary">حفظ</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- نافذة التأكيد (بديل عن confirm) -->
+    <div id="modalConfirm" class="modal">
+        <div class="modal-content modal-confirm-content">
+            <div class="modal-header">
+                <h3>تأكيد</h3>
+                <button type="button" class="modal-close" id="confirmClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage" class="confirm-message"></p>
+            </div>
+            <div class="form-actions" id="confirmActions">
+                <button type="button" class="btn btn-secondary" id="confirmCancel">إلغاء</button>
+                <button type="button" class="btn btn-danger" id="confirmOk">تأكيد</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="admin.js"></script>
+</body>
+</html>
