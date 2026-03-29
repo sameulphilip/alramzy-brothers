@@ -1,0 +1,4 @@
+# منع الوصول المباشر لملف البيانات
+<Files "store.json">
+    Require all denied
+</Files>

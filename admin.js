@@ -14,20 +14,38 @@
         categories.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
     }
 
+    function persistToServer() {
+        var payload = {
+            action: 'save',
+            products: products,
+            categories: categories,
+            brands: brands,
+            contact: contact,
+            audit: getAuditLog()
+        };
+        saveToServer(payload).catch(function() {
+            console.warn('تعذّر الحفظ على السيرفر. البيانات محفوظة محلياً.');
+        });
+    }
+
     function persistProducts() {
         saveProducts(products);
+        persistToServer();
     }
 
     function persistCategories() {
         saveCategories(categories);
+        persistToServer();
     }
 
     function persistBrands() {
         saveBrands(brands);
+        persistToServer();
     }
 
     function persistContact() {
         saveContact(contact);
+        persistToServer();
     }
 
     function getNextContactId() {
@@ -337,11 +355,120 @@
         }
     }
 
+    function exportBackup() {
+        var data = {
+            exportDate: new Date().toISOString(),
+            products: products,
+            categories: categories,
+            brands: brands,
+            contact: contact,
+            audit: getAuditLog()
+        };
+        var json = JSON.stringify(data, null, 2);
+        var blob = new Blob([json], { type: 'application/json' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'alramzy-backup-' + new Date().toISOString().slice(0, 10) + '.json';
+        a.click();
+        URL.revokeObjectURL(a.href);
+    }
+
+    function restoreBackup(file) {
+        var reader = new FileReader();
+        reader.onload = function() {
+            try {
+                var data = JSON.parse(reader.result);
+                if (!data) throw new Error('ملف فارغ');
+                if (Array.isArray(data.products)) saveProducts(data.products);
+                if (Array.isArray(data.categories)) saveCategories(data.categories);
+                if (Array.isArray(data.brands)) saveBrands(data.brands);
+                if (Array.isArray(data.contact)) saveContact(data.contact);
+                if (Array.isArray(data.audit)) saveAuditLog(data.audit);
+                var payload = { action: 'save', products: data.products || [], categories: data.categories || [], brands: data.brands || [], contact: data.contact || [], audit: data.audit || [] };
+                if (typeof saveToServer === 'function') {
+                    saveToServer(payload).then(function() {
+                        alert('تمت استعادة النسخة الاحتياطية على السيرفر. جاري إعادة تحميل الصفحة.');
+                        window.location.reload();
+                    }).catch(function() {
+                        alert('تمت الاستعادة محلياً. تعذّر الحفظ على السيرفر.');
+                        window.location.reload();
+                    });
+                } else {
+                    alert('تمت استعادة النسخة الاحتياطية. جاري إعادة تحميل الصفحة.');
+                    window.location.reload();
+                }
+            } catch (err) {
+                alert('فشلت الاستعادة: ' + (err.message || 'ملف غير صالح'));
+            }
+        };
+        reader.readAsText(file, 'UTF-8');
+    }
+
+    var btnExport = document.getElementById('btnExportBackup');
+    if (btnExport) btnExport.addEventListener('click', exportBackup);
+    var importBackup = document.getElementById('importBackupInput');
+    if (importBackup) importBackup.addEventListener('change', function() {
+        var file = this.files && this.files[0];
+        this.value = '';
+        if (file) restoreBackup(file);
+    });
+
     document.getElementById('btnAddProduct').addEventListener('click', function() {
         fillCategorySelect();
         fillBrandSelect();
         openProductModal(null);
     });
+
+    var btnDeleteAll = document.getElementById('btnDeleteAllProducts');
+    if (btnDeleteAll) btnDeleteAll.addEventListener('click', function() {
+        if (!products.length) {
+            alert('لا توجد منتجات للحذف.');
+            return;
+        }
+        showConfirm('سيتم حذف جميع المنتجات (' + products.length + ') نهائياً من السيرفر. هل أنت متأكد؟', function() {
+            var username = currentUser ? currentUser.username : '';
+            addAuditEntry('delete', 'product', 'all', 'حذف جميع المنتجات', username);
+            products = [];
+            persistProducts();
+            renderProductsTable();
+        });
+    });
+
+    /** فك ترميز CSV: UTF-8 أو Windows-1256 (Excel العربي) */
+    function decodeCsvFileBytes(buffer) {
+        var u8 = new Uint8Array(buffer);
+        var arabicCount = function(str) {
+            if (!str) return 0;
+            var m = str.match(/[\u0600-\u06FF\u0750-\u077F\u08A0-\u08FF\ufb50-\ufdff\ufe70-\ufefc]/g);
+            return m ? m.length : 0;
+        };
+        var start = 0;
+        if (u8.length >= 3 && u8[0] === 0xEF && u8[1] === 0xBB && u8[2] === 0xBF) start = 3;
+        var body = u8.subarray(start);
+        var utf8 = new TextDecoder('utf-8', { fatal: false }).decode(body);
+        var nUtf = arabicCount(utf8);
+        var n1256 = 0;
+        var cp1256Text = '';
+        try {
+            cp1256Text = new TextDecoder('windows-1256').decode(body);
+            n1256 = arabicCount(cp1256Text);
+        } catch (e) {
+            try {
+                cp1256Text = new TextDecoder('windows-1256').decode(u8);
+                n1256 = arabicCount(cp1256Text);
+            } catch (e2) {}
+        }
+        try {
+            var alt = new TextDecoder('windows-1256').decode(u8);
+            var nAlt = arabicCount(alt);
+            if (nAlt > n1256) {
+                n1256 = nAlt;
+                cp1256Text = alt;
+            }
+        } catch (e3) {}
+        if (n1256 > nUtf) return cp1256Text;
+        return utf8;
+    }
 
     function parseCSVLine(line) {
         var out = [];
@@ -381,6 +508,68 @@
         return -1;
     }
 
+    function simpleHashStr(str) {
+        var h = 5381;
+        for (var i = 0; i < str.length; i++) h = ((h << 5) + h) + str.charCodeAt(i);
+        return (h >>> 0);
+    }
+
+    /** يطابق فئة موجودة أو ينشئ فئة جديدة من قيمة عمود category في CSV */
+    function resolveOrCreateCategoryFromCsv(raw) {
+        var t = String(raw || '').trim();
+        if (!t) return categories[0] ? categories[0].id : 'misc';
+        var key = t.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+        if (key.length > 0) {
+            var existing = categories.find(function(c) { return c.id === key; });
+            if (existing) return key;
+            var ord = categories.reduce(function(m, c) { return Math.max(m, c.order || 0); }, 0) + 1;
+            categories.push({ id: key, name: { ar: t, en: t }, icon: '📦', order: ord });
+            categories.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+            return key;
+        }
+        var byName = categories.find(function(c) {
+            var ar = c.name && c.name.ar ? c.name.ar.trim() : '';
+            var en = c.name && c.name.en ? c.name.en.trim() : '';
+            return ar === t || (en && en.toLowerCase() === t.toLowerCase());
+        });
+        if (byName) return byName.id;
+        var newId = 'cat_' + simpleHashStr(t).toString(36);
+        var tries = 0;
+        while (categories.some(function(c) { return c.id === newId; }) && tries < 20) {
+            newId = 'cat_' + simpleHashStr(t + String(tries++)).toString(36);
+        }
+        var ord2 = categories.reduce(function(m, c) { return Math.max(m, c.order || 0); }, 0) + 1;
+        categories.push({ id: newId, name: { ar: t, en: t }, icon: '📦', order: ord2 });
+        categories.sort(function(a, b) { return (a.order || 0) - (b.order || 0); });
+        return newId;
+    }
+
+    /** يطابق ماركة موجودة أو ينشئ ماركة جديدة من قيمة عمود brand في CSV */
+    function resolveOrCreateBrandFromCsv(raw) {
+        var t = String(raw || '').trim();
+        if (!t) return undefined;
+        var key = t.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+        if (key.length > 0) {
+            var existing = brands.find(function(b) { return b.id === key; });
+            if (existing) return key;
+            brands.push({ id: key, name: { ar: t, en: t } });
+            return key;
+        }
+        var byName = brands.find(function(b) {
+            var ar = b.name && b.name.ar ? b.name.ar.trim() : '';
+            var en = b.name && b.name.en ? b.name.en.trim() : '';
+            return ar === t || (en && en.toLowerCase() === t.toLowerCase());
+        });
+        if (byName) return byName.id;
+        var newId = 'brand_' + simpleHashStr(t).toString(36);
+        var tries = 0;
+        while (brands.some(function(b) { return b.id === newId; }) && tries < 20) {
+            newId = 'brand_' + simpleHashStr(t + String(tries++)).toString(36);
+        }
+        brands.push({ id: newId, name: { ar: t, en: t } });
+        return newId;
+    }
+
     function importProductsFromCSV(csvText) {
         var rows = parseCSV(csvText);
         if (!rows.length) return { products: [], errors: ['الملف فارغ'] };
@@ -402,9 +591,10 @@
             var nameAr = nameArIdx >= 0 && row[nameArIdx] !== undefined ? String(row[nameArIdx]).trim() : '';
             var nameEn = nameEnIdx >= 0 && row[nameEnIdx] !== undefined ? String(row[nameEnIdx]).trim() : '';
             if (!nameAr && !nameEn) continue;
-            var cat = categoryIdx >= 0 && row[categoryIdx] !== undefined ? String(row[categoryIdx]).trim() : (categories[0] ? categories[0].id : '');
-            var brand = brandIdx >= 0 && row[brandIdx] !== undefined ? String(row[brandIdx]).trim() : undefined;
-            if (!brand) brand = undefined;
+            var catRaw = categoryIdx >= 0 && row[categoryIdx] !== undefined ? String(row[categoryIdx]).trim() : '';
+            var cat = resolveOrCreateCategoryFromCsv(catRaw || (categories[0] ? categories[0].id : ''));
+            var brandRaw = brandIdx >= 0 && row[brandIdx] !== undefined ? String(row[brandIdx]).trim() : '';
+            var brand = brandRaw ? resolveOrCreateBrandFromCsv(brandRaw) : undefined;
             var icon = iconIdx >= 0 && row[iconIdx] !== undefined ? String(row[iconIdx]).trim() : '📦';
             if (!icon) icon = '📦';
             var isImg = icon.indexOf('data:image') === 0 || icon.indexOf('http://') === 0 || icon.indexOf('https://') === 0;
@@ -421,13 +611,15 @@
         return { products: list, errors: errors };
     }
 
-    document.getElementById('importCsvInput').addEventListener('change', function() {
+    var importCsvEl = document.getElementById('importCsvInput');
+    if (importCsvEl) importCsvEl.addEventListener('change', function() {
         var file = this.files && this.files[0];
         this.value = '';
         if (!file) return;
         var reader = new FileReader();
         reader.onload = function() {
-            var result = importProductsFromCSV(reader.result);
+            var csvText = decodeCsvFileBytes(reader.result);
+            var result = importProductsFromCSV(csvText);
             if (result.errors.length) {
                 alert('أخطاء: ' + result.errors.join('\n'));
                 return;
@@ -445,9 +637,15 @@
             addAuditEntry('import_csv', 'product', '', 'استيراد ' + result.products.length + ' منتج', username);
             compressAllIcons().then(function() {
                 try {
+                    saveCategories(categories);
+                    saveBrands(brands);
                     persistProducts();
                     renderProductsTable();
-                    alert('تم استيراد ' + result.products.length + ' منتج بنجاح.');
+                    renderCategoriesTable();
+                    renderBrandsTable();
+                    fillCategorySelect();
+                    fillBrandSelect();
+                    alert('تم استيراد ' + result.products.length + ' منتج بنجاح. تم إنشاء أي فئات أو ماركات جديدة من الملف تلقائياً.');
                 } catch (err) {
                     if (err && err.name === 'QuotaExceededError') {
                         alert('مساحة التخزين ممتلئة. قلّل عدد المنتجات أو أحجام الصور في الملف.');
@@ -455,7 +653,7 @@
                 }
             });
         };
-        reader.readAsText(file, 'UTF-8');
+        reader.readAsArrayBuffer(file);
     });
 
     document.getElementById('downloadCsvTemplate').addEventListener('click', function(e) {
@@ -802,9 +1000,28 @@
         if (e.target === this) closeModal('modalContact');
     });
 
-    load();
-    fillCategorySelect();
-    fillBrandSelect();
-    renderProductsTable();
-    renderCategoriesTable();
+    function initAfterLoad() {
+        load();
+        fillCategorySelect();
+        fillBrandSelect();
+        renderProductsTable();
+        renderCategoriesTable();
+    }
+
+    if (typeof loadFromServer === 'function') {
+        loadFromServer().then(function(data) {
+            if (data) {
+                if (Array.isArray(data.products)) saveProducts(data.products);
+                if (Array.isArray(data.categories)) saveCategories(data.categories);
+                if (Array.isArray(data.brands)) saveBrands(data.brands);
+                if (Array.isArray(data.contact)) saveContact(data.contact);
+                if (Array.isArray(data.audit)) saveAuditLog(data.audit);
+            }
+            initAfterLoad();
+        }).catch(function() {
+            initAfterLoad();
+        });
+    } else {
+        initAfterLoad();
+    }
 })();

@@ -2,13 +2,9 @@
 // Use currentLang from script.js if available, otherwise declare it
 var currentLang = (typeof currentLang !== 'undefined') ? currentLang : 'ar';
 
-// Products Data - Always define it here to ensure it's available
-// First check if window.products exists (from script.js), otherwise use local data
+// Products Data — من السيرفر أو localStorage أو البيانات الافتراضية
 var products;
-if (typeof window !== 'undefined' && typeof window.products !== 'undefined' && window.products.length > 0) {
-    products = window.products;
-} else {
-    products = [
+var productsFallback = [
         {
             id: 1,
             name: { ar: 'فلتر زيت محرك', en: 'Engine Oil Filter' },
@@ -153,14 +149,8 @@ if (typeof window !== 'undefined' && typeof window.products !== 'undefined' && w
             price: { ar: '450 ج.م', en: '450 EGP' },
             icon: '💧'
         }
-    ];
-}
-
-// Make sure products is available globally
-if (typeof window !== 'undefined') {
-    window.products = products;
-    console.log('Products array initialized with', products.length, 'items');
-}
+];
+products = (typeof getStoredProducts === 'function' ? getStoredProducts() : null) || (typeof window !== 'undefined' && window.products && window.products.length ? window.products : null) || productsFallback;
 
 // Get product ID from URL
 function getProductId() {
@@ -170,19 +160,33 @@ function getProductId() {
     return id ? parseInt(id) : null;
 }
 
-// Initialize
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM Content Loaded');
-    console.log('Products available:', typeof products !== 'undefined' && products.length > 0);
-    console.log('Window products available:', typeof window.products !== 'undefined' && window.products.length > 0);
-    
+// Initialize — تحميل من السيرفر إن لم تكن المنتجات متوفرة
+function initProductPage() {
     initializeLanguage();
     initializeMobileMenu();
-    
-    // Load product details immediately (products should be available)
-    setTimeout(function() {
-        loadProductDetails();
-    }, 10);
+    loadProductDetails();
+}
+document.addEventListener('DOMContentLoaded', function() {
+    if (products && products.length > 0) {
+        initProductPage();
+        return;
+    }
+    if (typeof loadFromServer === 'function') {
+        loadFromServer().then(function(data) {
+            if (data && data.products && data.products.length) {
+                if (typeof saveProducts === 'function') saveProducts(data.products);
+                products = data.products;
+            } else {
+                products = productsFallback;
+            }
+            initProductPage();
+        }).catch(function() {
+            products = productsFallback;
+            initProductPage();
+        });
+    } else {
+        initProductPage();
+    }
 });
 
 // Language Functions

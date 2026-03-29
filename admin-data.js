@@ -1,7 +1,23 @@
 /**
  * بيانات افتراضية ووظائف التخزين — مشتركة بين الموقع ولوحة التحكم
- * Default data and storage helpers — shared between site and admin
+ * التخزين الرئيسي على السيرفر عبر api.php مع fallback على localStorage
  */
+var API_ENDPOINT = 'api.php';
+
+function loadFromServer() {
+    return fetch(API_ENDPOINT + '?action=load')
+        .then(function(r) { return r.json(); })
+        .catch(function() { return null; });
+}
+
+function saveToServer(data) {
+    return fetch(API_ENDPOINT, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+    }).then(function(r) { return r.json(); });
+}
+
 const ADMIN_STORAGE_KEYS = {
     products: 'alramzy_products',
     categories: 'alramzy_categories',
@@ -77,6 +93,12 @@ function addAuditEntry(action, entityType, entityId, entityName, username) {
     });
     if (log.length > 500) log = log.slice(0, 500);
     localStorage.setItem(ADMIN_STORAGE_KEYS.audit, JSON.stringify(log));
+}
+
+function saveAuditLog(log) {
+    var list = Array.isArray(log) ? log : [];
+    if (list.length > 500) list = list.slice(0, 500);
+    localStorage.setItem(ADMIN_STORAGE_KEYS.audit, JSON.stringify(list));
 }
 
 const DEFAULT_CATEGORIES = [

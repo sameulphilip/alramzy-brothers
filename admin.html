@@ -40,9 +40,10 @@
                         <input type="file" id="importCsvInput" accept=".csv" style="display:none">
                     </label>
                     <a href="#" id="downloadCsvTemplate" class="btn btn-outline" download="products-template.csv">تحميل نموذج CSV</a>
+                    <button type="button" class="btn btn-danger btn-sm" id="btnDeleteAllProducts" title="لا يمكن التراجع">حذف جميع المنتجات</button>
                 </div>
             </div>
-            <p class="import-hint" id="importCsvHint">الأعمدة المطلوبة: name_ar, name_en, desc_ar, desc_en, category, brand, price_ar, price_en, icon (اختياري). في icon يمكن وضع إيموجي (مثل 🚛) أو <strong>رابط صورة</strong> (http أو https). الفئة والماركة: نفس المعرفات (مثل engine, mercedes).</p>
+            <p class="import-hint" id="importCsvHint">الأعمدة المطلوبة: name_ar, name_en, desc_ar, desc_en, category, brand, price_ar, price_en, icon (اختياري). في icon يمكن وضع إيموجي أو <strong>رابط صورة</strong>. عمود <strong>category</strong> و<strong>brand</strong>: معرف لاتيني (مثل engine، mercedes) أو اسم عربي/إنجليزي؛ إن لم تكن الفئة أو الماركة موجودة تُنشأ تلقائياً. اترك brand فارغاً لمنتج بدون ماركة. إذا ظهرت العربية بشكل خاطئ في Excel استخدم <strong>حفظ باسم → CSV UTF-8</strong>؛ النظام يدعم أيضاً ترميز Excel العربي تلقائياً.</p>
             <div class="admin-table-wrap">
                 <table class="admin-table">
                     <thead>

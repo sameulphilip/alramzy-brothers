@@ -122,22 +122,36 @@ function renderBrandCards() {
     container.innerHTML = brandCards;
 }
 
-// Initialize
+// Initialize — تحميل البيانات من السيرفر أولاً إن وُجدت
 document.addEventListener('DOMContentLoaded', function() {
-    loadDataFromStorage();
-    initializeLanguage();
-    initializeMobileMenu();
-    renderCategoryCards();
-    renderFilterButtons();
-    renderBrandCards();
-    renderNewProducts();
-    renderContactSection();
-    initializeProducts();
-    initializeFilters();
-    initializeCategoryCards();
-    initializeBrandCards();
-    initializeSmoothScroll();
-    /* Hero slider: FNC slider init in fnc-slider.js */
+    function doInit() {
+        loadDataFromStorage();
+        initializeLanguage();
+        initializeMobileMenu();
+        renderCategoryCards();
+        renderFilterButtons();
+        renderBrandCards();
+        renderNewProducts();
+        renderContactSection();
+        initializeProducts();
+        initializeFilters();
+        initializeCategoryCards();
+        initializeBrandCards();
+        initializeSmoothScroll();
+    }
+    if (typeof loadFromServer === 'function') {
+        loadFromServer().then(function(data) {
+            if (data) {
+                if (Array.isArray(data.products)) saveProducts(data.products);
+                if (Array.isArray(data.categories)) saveCategories(data.categories);
+                if (Array.isArray(data.brands)) saveBrands(data.brands);
+                if (Array.isArray(data.contact)) saveContact(data.contact);
+            }
+            doInit();
+        }).catch(function() { doInit(); });
+    } else {
+        doInit();
+    }
 });
 
 // Language Functions

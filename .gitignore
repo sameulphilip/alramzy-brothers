@@ -16,3 +16,6 @@ npm-debug.log*
 # Env (if added later)
 .env
 .env.local
+
+# Server database (يُنشأ تلقائياً على السيرفر)
+data/store.json
