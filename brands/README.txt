@@ -1,8 +1,12 @@
-ضع هنا صور/شعارات الماركات بالأسماء التالية:
-mercedes.png  —  مرسيدس بنز
-man.png       —  مان
-volvo.png     —  فولفو
-scania.png    —  سكانيا
-daf.png       —  داف
+شعارات العلامات الموثوقة (PNG):
 
-يفضل خلفية شفافة (PNG) وحجم تقريبي 200×80 بكسل أو ما يناسب نسبة العرض للارتفاع.
+mercedes.png  — Mercedes-Benz
+man.png       — MAN
+volvo.png     — Volvo
+scania.png    — Scania
+daf.png       — DAF
+renault.png   — Renault
+cummins.png   — Cummins
+perkins.png   — Perkins
+
+يفضل خلفية شفافة وحجم مناسب للعرض في الشبكة (حوالي 200×80 بكسل أو ما يناسب نسبة الشعار).

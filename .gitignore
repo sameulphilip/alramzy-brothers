@@ -19,3 +19,22 @@ npm-debug.log*
 
 # Server database (يُنشأ تلقائياً على السيرفر)
 data/store.json
+
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Large media backups
+hero-video-original.mp4
+
+# Templates / archives (not part of live site)
+redparts-template/
+redparts-auto-parts*.zip
+*.zip
+
+# Local HTML backups
+index.backup*.html
+index.before*.html
+
+# Nested app repo (separate project)
+alramzy-app/

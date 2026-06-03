@@ -188,7 +188,7 @@
   font-size: 100px;
   color: #fff;
   word-spacing: 10px;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: 'Tajawal', 'Manrope', sans-serif;
 }
 
 .fnc-slide__heading-line:nth-child(2) {
@@ -243,7 +243,7 @@
   outline: none;
   text-decoration: none;
   display: inline-block;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: 'Tajawal', 'Manrope', sans-serif;
 }
 
 .fnc-slide__action-btn span {
@@ -349,7 +349,7 @@
   outline: none;
   cursor: pointer;
   transition: background-color 0.5s ease-in-out;
-  font-family: 'Cairo', 'Tajawal', sans-serif;
+  font-family: 'Tajawal', 'Manrope', sans-serif;
 }
 
 .fnc-nav__control.m--active-control {
@@ -392,12 +392,16 @@
   display: none !important;
 }
 
-/* إخفاء العناوين فقط وإظهار زر تصفح المنتجات */
+/* إخفاء العناوين؛ الأزرار من طبقة hero-editorial (Stitch) */
 .fnc-slider--ramzy .fnc-slide__heading {
   display: none !important;
 }
 
-/* تنسيق منطقة الزر: في المنتصف أسفل السلايدر */
+.fnc-slider--ramzy .fnc-slide__action-btn {
+  display: none !important;
+}
+
+/* تنسيق منطقة الزر: العربي — منتصف؛ English Desktop (Stitch LTR) — يسار تحريري */
 .fnc-slider--ramzy .fnc-slide__content {
   left: 50%;
   right: auto;
@@ -414,26 +418,30 @@
   transform: translateX(-50%);
 }
 
-/* زر تصفح المنتجات — أوضح ومتناسق */
-.fnc-slider--ramzy .fnc-slide__action-btn {
-  margin: 0;
-  padding: 14px 32px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fff;
-  background: #c41e3a;
-  border: 2px solid #fff;
-  border-radius: 8px;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.25);
-  transition: background 0.25s ease, transform 0.2s ease, box-shadow 0.25s ease;
-  text-decoration: none;
-  line-height: 1.4;
+html[dir="ltr"] .fnc-slider--ramzy .fnc-slide__content {
+  left: clamp(1.25rem, 5vw, 4rem);
+  right: auto;
+  transform: none;
+  text-align: left;
 }
 
-.fnc-slider--ramzy .fnc-slide__action-btn:hover {
-  background: #a01830;
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.35);
+/* تسميات تبويب السلايد (مع span للغة دون كسر شريط التقدم) */
+.fnc-slider--ramzy .fnc-nav__control {
+  width: auto;
+  min-width: 112px;
+  max-width: 50%;
+  padding: 0 10px;
+  text-transform: none;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+.fnc-slider--ramzy .fnc-nav__control-label {
+  display: block;
+  position: relative;
+  z-index: 1;
+  padding: 8px 2px 12px;
+  white-space: nowrap;
 }
 
 /* Al Ramzy: slide background images (JS adds .fnc-slide-1, .fnc-slide-2) */
