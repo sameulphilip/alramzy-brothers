@@ -201,8 +201,9 @@ function saveContact(list) {
 }
 
 var DEFAULT_CONTACT = [
-    { id: 1, type: 'phone', title: { ar: 'للتواصل والاستفسار', en: 'Contact & Inquiries' }, value: { ar: '01018360621', en: '01018360621' } },
-    { id: 2, type: 'phone', title: { ar: 'للتواصل والاستفسار', en: 'Contact & Inquiries' }, value: { ar: '01224894973', en: '01224894973' } },
+    { id: 1, type: 'phone', title: { ar: 'فرع السويس', en: 'Suez Branch' }, value: { ar: '01018360621', en: '01018360621' } },
+    { id: 2, type: 'phone', title: { ar: 'فرع السويس', en: 'Suez Branch' }, value: { ar: '01224894973', en: '01224894973' }, whatsapp: false },
+    { id: 6, type: 'phone', title: { ar: 'فرع القاهرة', en: 'Cairo Branch' }, value: { ar: '01008899560', en: '01008899560' } },
     { id: 3, type: 'link', title: { ar: 'المنطقة الصناعية القديمة – السويس', en: 'Old Industrial Zone – Suez' }, value: { ar: 'اضغط لفتح الموقع على الخريطة', en: 'Open on Google Maps' }, link: 'https://maps.app.goo.gl/kQ3rwFAAf5AJu4DQ9' },
     { id: 4, type: 'link', title: { ar: 'الأربعين أمام قسم الأربعين القديم – السويس', en: 'El-Arbaeen, in front of Old El-Arbaeen Police – Suez' }, value: { ar: 'اضغط لفتح الموقع على الخريطة', en: 'Open on Google Maps' }, link: 'https://maps.app.goo.gl/gJ4ZeBwEwWxtaQaf7' },
     { id: 5, type: 'link', title: { ar: 'شبرا الخلفاوى، ٢٢ شارع الجلاء أمام شركة غاز مصر - القاهرة', en: 'Shobra El-Khalawy, 22 El-Galaa St., in front of Egypt Gas - Cairo' }, value: { ar: 'اضغط لفتح الموقع على الخريطة', en: 'Open on Google Maps' }, link: 'https://maps.app.goo.gl/QPAufbUx3jziVLEHA' }

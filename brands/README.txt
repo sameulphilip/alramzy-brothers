@@ -4,7 +4,7 @@ mercedes.png  — Mercedes-Benz
 man.png       — MAN
 volvo.png     — Volvo
 scania.png    — Scania
-daf.png       — DAF
+deutz.png     — DEUTZ
 renault.png   — Renault
 cummins.png   — Cummins
 perkins.png   — Perkins

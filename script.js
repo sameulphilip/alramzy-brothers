@@ -31,6 +31,19 @@ function loadDataFromStorage() {
     categories = getStoredCategories() || DEFAULT_CATEGORIES;
     brands = (typeof getStoredBrands === 'function' ? getStoredBrands() : null) || (typeof DEFAULT_BRANDS !== 'undefined' ? DEFAULT_BRANDS : []);
     contactItems = (typeof getStoredContact === 'function' ? getStoredContact() : null) || (typeof DEFAULT_CONTACT !== 'undefined' ? DEFAULT_CONTACT : []);
+    var suezWhatsappUsed = false;
+    contactItems = contactItems.map(function(item) {
+        if (item.type !== 'phone') return item;
+        var isSuez = item.title && (item.title.ar === 'فرع السويس' || item.title.en === 'Suez Branch');
+        if (!isSuez) return item;
+        if (!suezWhatsappUsed) {
+            suezWhatsappUsed = true;
+            var primary = Object.assign({}, item);
+            delete primary.whatsapp;
+            return primary;
+        }
+        return Object.assign({}, item, { whatsapp: false });
+    });
     categories.sort((a, b) => (a.order || 0) - (b.order || 0));
     categoryNames = categories.reduce(function(acc, c) {
         acc[c.id] = c.name;
@@ -169,10 +182,14 @@ function phoneWhatsappHref(raw, lang) {
 
 var WHATSAPP_ICON_SVG = '<svg class="whatsapp-btn__icon" viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path fill="currentColor" d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>';
 
+function whatsappBranchLabel(item, lang) {
+    return contactField(item, 'title', lang) || contactField(item, 'value', lang);
+}
+
 function renderWhatsappFloat() {
     var container = document.getElementById('whatsappFloat');
     if (!container) return;
-    var phones = contactItems.filter(function(item) { return item.type === 'phone'; });
+    var phones = contactItems.filter(function(item) { return item.type === 'phone' && item.whatsapp !== false; });
     if (!phones.length) {
         container.innerHTML = '';
         container.hidden = true;
@@ -183,11 +200,12 @@ function renderWhatsappFloat() {
     container.hidden = false;
     container.innerHTML = phones.map(function(item) {
         var value = contactField(item, 'value', lang);
+        var branchLabel = whatsappBranchLabel(item, lang);
         var href = phoneWhatsappHref(value, lang);
         return '<a href="' + escapeHtml(href) + '" class="whatsapp-float__btn" target="_blank" rel="noopener noreferrer" ' +
-            'aria-label="' + escapeHtml(waWord + ' ' + value) + '" title="' + escapeHtml(value) + '">' +
+            'aria-label="' + escapeHtml(waWord + ' — ' + branchLabel) + '" title="' + escapeHtml(branchLabel + ' (' + value + ')') + '">' +
             WHATSAPP_ICON_SVG.replace('width="20" height="20"', 'width="28" height="28"') +
-            '<span class="whatsapp-float__num">' + escapeHtml(value) + '</span></a>';
+            '<span class="whatsapp-float__num">' + escapeHtml(branchLabel) + '</span></a>';
     }).join('');
 }
 
@@ -212,15 +230,19 @@ function renderFooter() {
             var href = item.type === 'phone' ? phoneTelHref(value) : 'mailto:' + encodeURIComponent(value);
             var bodyHtml;
             if (item.type === 'phone') {
-                var waHref = phoneWhatsappHref(value, lang);
-                var waText = lang === 'ar' ? 'واتساب' : 'WhatsApp';
+                var waBtnHtml = '';
+                if (item.whatsapp !== false) {
+                    var waHref = phoneWhatsappHref(value, lang);
+                    var waLabel = whatsappBranchLabel(item, lang);
+                    waBtnHtml = '<a class="btn-whatsapp" href="' + escapeHtml(waHref) + '" target="_blank" rel="noopener noreferrer">' +
+                        WHATSAPP_ICON_SVG + '<span>' + escapeHtml(waLabel) + '</span></a>';
+                }
                 bodyHtml =
                     '<div class="footer-contact__body">' +
                     '<span class="footer-contact__label">' + escapeHtml(title) + '</span>' +
                     '<div class="footer-contact__actions">' +
                     '<a class="footer-contact__phone" href="' + escapeHtml(href) + '">' + escapeHtml(value) + '</a>' +
-                    '<a class="btn-whatsapp" href="' + escapeHtml(waHref) + '" target="_blank" rel="noopener noreferrer">' +
-                    WHATSAPP_ICON_SVG + '<span>' + escapeHtml(waText) + '</span></a>' +
+                    waBtnHtml +
                     '</div></div>';
             } else {
                 bodyHtml =
@@ -263,14 +285,14 @@ function renderContactSection() {
     if (!container || !contactItems.length) return;
     var lang = currentLang;
     var tw = isTailwindSite();
-    var waText = lang === 'ar' ? 'واتساب' : 'WhatsApp';
     container.innerHTML = contactItems.map(function(item) {
         var title = (item.title && item.title[lang]) || (item.title && item.title.ar) || '';
         var value = (item.value && item.value[lang]) || (item.value && item.value.ar) || '';
         var waBtn = '';
-        if (item.type === 'phone') {
+        if (item.type === 'phone' && item.whatsapp !== false) {
+            var waLabel = whatsappBranchLabel(item, lang);
             waBtn = '<a class="btn-whatsapp btn-whatsapp--inline" href="' + escapeHtml(phoneWhatsappHref(value, lang)) + '" target="_blank" rel="noopener noreferrer">' +
-                WHATSAPP_ICON_SVG + '<span>' + waText + '</span></a>';
+                WHATSAPP_ICON_SVG + '<span>' + escapeHtml(waLabel) + '</span></a>';
         }
         if (tw) {
             var matIcon = CONTACT_MAT_ICONS[item.type] || 'link';
