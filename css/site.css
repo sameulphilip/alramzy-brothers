@@ -590,7 +590,7 @@ a { color: inherit; }
 }
 
 .trusted-brand-card {
-    display: none;
+    display: flex;
     align-items: center;
     justify-content: center;
     min-height: 11rem;
@@ -599,13 +599,7 @@ a { color: inherit; }
     border: 0;
     border-radius: 0;
     box-shadow: none;
-    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease, opacity 0.25s ease;
-    opacity: 0;
-}
-
-.trusted-brand-card.is-visible {
-    display: flex;
-    opacity: 1;
+    transition: transform 0.22s ease, box-shadow 0.22s ease, border-color 0.22s ease;
 }
 
 .trusted-brand-card:hover {

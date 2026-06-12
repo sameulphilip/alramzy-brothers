@@ -342,30 +342,11 @@ function renderBrandCards() {
 }
 
 function initializeTrustedBrandsCarousel() {
-    var cards = Array.prototype.slice.call(document.querySelectorAll('.trusted-brand-card'));
-    if (!cards.length) return;
-    var groupSize = 4;
-    var start = 0;
-    var total = cards.length;
     var timerKey = '__trustedBrandsTimer';
     if (window[timerKey]) {
         clearInterval(window[timerKey]);
+        window[timerKey] = null;
     }
-
-    function drawGroup(from) {
-        cards.forEach(function(card, idx) {
-            var visible = idx >= from && idx < from + groupSize;
-            card.classList.toggle('is-visible', visible);
-        });
-    }
-
-    drawGroup(start);
-
-    if (total <= groupSize) return;
-    window[timerKey] = setInterval(function() {
-        start = (start + groupSize) % total;
-        drawGroup(start);
-    }, 3000);
 }
 
 // Initialize — تحميل البيانات من السيرفر أولاً إن وُجدت
